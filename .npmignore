@@ -1,0 +1,32 @@
+# source code
+src
+public
+
+# compiler
+tsconfig.json
+tools
+postcss.config.js
+.babelrc.js
+
+# files
+*.log
+cypress.json
+*.code-workspace
+
+# tests
+test
+__tests__
+jest.config.js
+setupJest.ts
+coverage
+
+#  lint
+.eslintrc.js
+.prettierrc
+
+# IDE - VSCode
+.vscode
+
+# git
+.git
+.gitlab-ci.yml
