@@ -22,7 +22,7 @@ module.exports = {
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, '../dist'),
-    library: 'reactjs-localizer',
+    library: 'reactjs-formizer',
     libraryTarget: 'umd',
     globalObject: 'this',
     umdNamedDefine: true,
