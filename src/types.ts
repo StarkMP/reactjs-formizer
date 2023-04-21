@@ -1,6 +1,6 @@
 import type { SyntheticEvent } from 'react';
 
-export type FieldValue = string;
+export type FieldValue = string | number | readonly string[] | undefined;
 export type FieldError = string;
 
 export type FieldData = {

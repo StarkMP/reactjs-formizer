@@ -16,15 +16,31 @@ export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'name'> & {
 const Input: React.FC<InputProps> = ({
   onChange,
   name,
+  type,
+  value,
   required,
   maxLength,
   minLength,
   pattern,
   ...other
 }) => {
-  const [value, setValue] = useState<FieldValue>('');
+  const [controlledValue, setControlledValue] = useState<FieldValue>(
+    value || ''
+  );
   const { updateValue, updateErrors, initRules, onFieldChange, fields } =
     useContext(FormContext);
+
+  // const formattedValue = useMemo(() => {
+  //   if (typeof controlledValue === 'number') {
+  //     return String(controlledValue);
+  //   }
+
+  //   if (typeof controlledValue === 'boolean') {
+  //     return controlledValue ? 'true' : 'false';
+  //   }
+
+  //   return controlledValue;
+  // }, [controlledValue]);
 
   useEffect(() => {
     const rules: FieldRules = {
@@ -36,13 +52,18 @@ const Input: React.FC<InputProps> = ({
     };
 
     initRules(name, rules);
-    updateValue(name, value);
+
+    if (type === 'radio') {
+      updateValue(name, void 0);
+    } else {
+      updateValue(name, controlledValue);
+    }
   }, []);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const value = e.currentTarget.value;
 
-    setValue(value);
+    setControlledValue(value);
 
     if (onChange) {
       onChange(e);
@@ -56,7 +77,15 @@ const Input: React.FC<InputProps> = ({
     onFieldChange(name, { value, errors });
   };
 
-  return <input {...other} name={name} onChange={handleChange} value={value} />;
+  return (
+    <input
+      {...other}
+      type={type}
+      name={name}
+      onChange={handleChange}
+      value={controlledValue}
+    />
+  );
 };
 
 export default Input;

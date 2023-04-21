@@ -16,8 +16,19 @@ export const getValidationErrors = (
   const pattern = rules[FormValidationRules.Pattern];
   const customFn = rules[FormValidationRules.Custom];
 
-  if (rules[FormValidationRules.Required] == true && value === '') {
+  if (
+    rules[FormValidationRules.Required] == true &&
+    (value === undefined || value === '')
+  ) {
     errors.push(FormValidationRules.Required);
+  }
+
+  if (customFn !== undefined && customFn(value) !== true) {
+    errors.push(FormValidationRules.Custom);
+  }
+
+  if (typeof value !== 'string') {
+    return errors;
   }
 
   if (maxLength !== undefined && value.length > maxLength) {
@@ -30,10 +41,6 @@ export const getValidationErrors = (
 
   if (pattern !== undefined && new RegExp(pattern).test(value) === false) {
     errors.push(FormValidationRules.Pattern);
-  }
-
-  if (customFn !== undefined && customFn(value) !== true) {
-    errors.push(FormValidationRules.Custom);
   }
 
   return errors;

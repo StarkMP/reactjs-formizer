@@ -16,6 +16,7 @@ const validationMessages: {
 } = {
   email: {
     [FormValidationRules.Required]: 'Email is required!',
+    [FormValidationRules.Pattern]: 'Email is incorrect!',
   },
   password: {
     [FormValidationRules.Required]: 'Password is required!',
@@ -26,6 +27,12 @@ const validationMessages: {
   },
   confirm: {
     [FormValidationRules.Required]: 'Please confirm password!',
+  },
+  age: {
+    [FormValidationRules.Required]: 'Age is required!',
+  },
+  fav_language: {
+    [FormValidationRules.Required]: 'Favorite language is required!',
   },
 };
 
@@ -63,8 +70,15 @@ export const RegistrationPage: React.FC = () => {
           maxWidth: '300px',
         }}
       >
-        <Input name='email' type='email' placeholder='Email' required />
+        <Input
+          name='email'
+          type='email'
+          placeholder='Email'
+          required
+          pattern='^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+        />
         {errors.email && validationMessages.email[errors.email[0]]}
+
         <Input
           name='password'
           type='password'
@@ -74,6 +88,7 @@ export const RegistrationPage: React.FC = () => {
           minLength={6}
         />
         {errors.password && validationMessages.password[errors.password[0]]}
+
         <Input
           name='confirm'
           type='password'
@@ -81,6 +96,41 @@ export const RegistrationPage: React.FC = () => {
           required
         />
         {errors.confirm && validationMessages.confirm[errors.confirm[0]]}
+
+        <Input name='age' type='number' placeholder='Your age' required />
+        {errors.age && validationMessages.age[errors.age[0]]}
+
+        <div>
+          <Input
+            type='radio'
+            id='html'
+            name='fav_language'
+            value='HTML'
+            required
+          />
+          <label htmlFor='html'>HTML</label>
+          <br />
+          <Input
+            type='radio'
+            id='css'
+            name='fav_language'
+            value='CSS'
+            required
+          />
+          <label htmlFor='css'>CSS</label>
+          <br />
+          <Input
+            type='radio'
+            id='javascript'
+            name='fav_language'
+            value='JavaScript'
+            required
+          />
+          <label htmlFor='javascript'>JavaScript</label>
+        </div>
+        {errors.fav_language &&
+          validationMessages.fav_language[errors.fav_language[0]]}
+
         <button type='submit'>Register</button>
       </Form>
     </div>
