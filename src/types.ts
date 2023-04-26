@@ -1,6 +1,6 @@
-import type { SyntheticEvent } from 'react';
+import type { InputHTMLAttributes, SyntheticEvent } from 'react';
 
-export type FieldValue = string | number | readonly string[] | undefined;
+export type FieldValue = string | number | boolean | undefined;
 export type FieldError = string;
 
 export type FieldData = {
@@ -45,3 +45,29 @@ export type SubmitHandlerParams = {
 export type SubmitHandler = (params: SubmitHandlerParams) => void;
 export type ValidationFailedHandler = (params: SubmitHandlerParams) => void;
 export type FieldsChangeHandler = (data: FieldsData) => void;
+
+export type TextInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'name' | 'value' | 'type'
+> & {
+  type: 'text' | 'password' | 'number' | 'email' | 'search' | 'tel' | 'url';
+  name: string;
+  value?: string;
+};
+
+export type RadioInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'name' | 'value' | 'type'
+> & {
+  type: 'radio';
+  name: string;
+  value: string;
+};
+
+export type CheckboxInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'name' | 'value' | 'type'
+> & {
+  type: 'checkbox';
+  name: string;
+};

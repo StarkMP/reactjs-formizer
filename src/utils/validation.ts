@@ -7,7 +7,7 @@ import {
 
 export const getValidationErrors = (
   value: FieldValue,
-  rules: FieldRules
+  rules: FieldRules = {}
 ): FieldError[] => {
   const errors = [];
 
@@ -18,7 +18,7 @@ export const getValidationErrors = (
 
   if (
     rules[FormValidationRules.Required] == true &&
-    (value === undefined || value === '')
+    (value === undefined || value === '' || value === false)
   ) {
     errors.push(FormValidationRules.Required);
   }

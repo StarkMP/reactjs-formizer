@@ -1,91 +1,36 @@
-import React, {
-  InputHTMLAttributes,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React from 'react';
 
-import { FormContext } from '../../context';
-import { FieldRules, FieldValue, FormValidationRules } from '../../types';
-import { getValidationErrors } from '../../utils/validation';
+import {
+  CheckboxInputProps,
+  RadioInputProps,
+  TextInputProps,
+} from '../../types';
+import CheckboxInput from './Checkbox';
+import RadioInput from './Radio';
+import TextInput from './Text';
 
-export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'name'> & {
-  name: string;
-};
+export type InputProps = TextInputProps | RadioInputProps | CheckboxInputProps;
 
-const Input: React.FC<InputProps> = ({
-  onChange,
-  name,
-  type,
-  value,
-  required,
-  maxLength,
-  minLength,
-  pattern,
-  ...other
-}) => {
-  const [controlledValue, setControlledValue] = useState<FieldValue>(
-    value || ''
-  );
-  const { updateValue, updateErrors, initRules, onFieldChange, fields } =
-    useContext(FormContext);
+const Input: React.FC<InputProps> = ({ type = 'text', ...other }) => {
+  switch (type) {
+    case 'text':
+    case 'password':
+    case 'number':
+    case 'email':
+    case 'search':
+    case 'tel':
+    case 'url':
+      return <TextInput {...(other as TextInputProps)} type={type} />;
 
-  // const formattedValue = useMemo(() => {
-  //   if (typeof controlledValue === 'number') {
-  //     return String(controlledValue);
-  //   }
+    case 'radio':
+      return <RadioInput {...(other as RadioInputProps)} type={type} />;
 
-  //   if (typeof controlledValue === 'boolean') {
-  //     return controlledValue ? 'true' : 'false';
-  //   }
+    case 'checkbox':
+      return <CheckboxInput {...(other as CheckboxInputProps)} type={type} />;
 
-  //   return controlledValue;
-  // }, [controlledValue]);
-
-  useEffect(() => {
-    const rules: FieldRules = {
-      [FormValidationRules.Required]: required,
-      [FormValidationRules.MaxLength]: maxLength,
-      [FormValidationRules.MinLength]: minLength,
-      [FormValidationRules.Pattern]: pattern,
-      // [FormValidationRules.Custom]: custom,
-    };
-
-    initRules(name, rules);
-
-    if (type === 'radio') {
-      updateValue(name, void 0);
-    } else {
-      updateValue(name, controlledValue);
-    }
-  }, []);
-
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const value = e.currentTarget.value;
-
-    setControlledValue(value);
-
-    if (onChange) {
-      onChange(e);
-    }
-
-    updateValue(name, value);
-
-    const errors = getValidationErrors(value, fields[name].rules);
-
-    updateErrors(name, errors);
-    onFieldChange(name, { value, errors });
-  };
-
-  return (
-    <input
-      {...other}
-      type={type}
-      name={name}
-      onChange={handleChange}
-      value={controlledValue}
-    />
-  );
+    default:
+      return <input type={type} {...other} />;
+  }
 };
 
 export default Input;

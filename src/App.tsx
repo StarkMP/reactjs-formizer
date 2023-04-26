@@ -15,24 +15,27 @@ const validationMessages: {
   [fieldName: string]: { [ruleName: string]: string };
 } = {
   email: {
-    [FormValidationRules.Required]: 'Email is required!',
-    [FormValidationRules.Pattern]: 'Email is incorrect!',
+    [FormValidationRules.Required]: 'The email is required!',
+    [FormValidationRules.Pattern]: 'The email is incorrect!',
   },
   password: {
-    [FormValidationRules.Required]: 'Password is required!',
+    [FormValidationRules.Required]: 'The password is required!',
     [FormValidationRules.MinLength]:
-      'Password must be greater than 6 characters!',
+      'The password must be greater than 6 characters!',
     [FormValidationRules.MaxLength]:
-      'Password must be less or equal 18 characters!',
+      'The password must be less or equal 18 characters!',
   },
   confirm: {
-    [FormValidationRules.Required]: 'Please confirm password!',
+    [FormValidationRules.Required]: 'Please confirm the password!',
   },
   age: {
-    [FormValidationRules.Required]: 'Age is required!',
+    [FormValidationRules.Required]: 'The age is required!',
   },
   fav_language: {
-    [FormValidationRules.Required]: 'Favorite language is required!',
+    [FormValidationRules.Required]: 'The favorite language is required!',
+  },
+  privacy: {
+    [FormValidationRules.Required]: 'You must to accept the privacy policy!',
   },
 };
 
@@ -110,13 +113,7 @@ export const RegistrationPage: React.FC = () => {
           />
           <label htmlFor='html'>HTML</label>
           <br />
-          <Input
-            type='radio'
-            id='css'
-            name='fav_language'
-            value='CSS'
-            required
-          />
+          <Input type='radio' id='css' name='fav_language' value='CSS' />
           <label htmlFor='css'>CSS</label>
           <br />
           <Input
@@ -124,14 +121,26 @@ export const RegistrationPage: React.FC = () => {
             id='javascript'
             name='fav_language'
             value='JavaScript'
-            required
           />
           <label htmlFor='javascript'>JavaScript</label>
         </div>
         {errors.fav_language &&
           validationMessages.fav_language[errors.fav_language[0]]}
 
-        <button type='submit'>Register</button>
+        <div style={{ display: 'flex', marginTop: '20px' }}>
+          <label htmlFor='news'>I want to receive news</label>
+          <Input type='checkbox' name='news' />
+        </div>
+
+        <div style={{ display: 'flex' }}>
+          <label htmlFor='privacy'>Accept the privacy policy</label>
+          <Input type='checkbox' name='privacy' required />
+        </div>
+        {errors.privacy && validationMessages.privacy[errors.privacy[0]]}
+
+        <button type='submit' style={{ marginTop: '20px' }}>
+          Register
+        </button>
       </Form>
     </div>
   );
