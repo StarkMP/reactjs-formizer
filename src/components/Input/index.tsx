@@ -20,6 +20,13 @@ const Input: React.FC<InputProps> = ({ type = 'text', ...other }) => {
     case 'search':
     case 'tel':
     case 'url':
+    case 'date':
+    case 'datetime-local':
+    case 'month':
+    case 'week':
+    case 'range':
+    case 'color':
+    case 'time':
       return <TextInput {...(other as TextInputProps)} type={type} />;
 
     case 'radio':
@@ -27,6 +34,12 @@ const Input: React.FC<InputProps> = ({ type = 'text', ...other }) => {
 
     case 'checkbox':
       return <CheckboxInput {...(other as CheckboxInputProps)} type={type} />;
+
+    // case 'file':
+    //   return;
+
+    // case 'hidden':
+    //   return;
 
     default:
       return <input type={type} {...other} />;

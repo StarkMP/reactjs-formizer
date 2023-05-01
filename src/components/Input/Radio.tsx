@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { FormContext } from '../../context';
 import { FormValidationRules, RadioInputProps } from '../../types';

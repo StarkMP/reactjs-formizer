@@ -35,8 +35,30 @@ const validationMessages: {
     [FormValidationRules.Required]: 'The favorite language is required!',
   },
   privacy: {
-    [FormValidationRules.Required]: 'You must to accept the privacy policy!',
+    [FormValidationRules.Required]: 'You must accept the privacy policy!',
   },
+  country: {
+    [FormValidationRules.Required]: 'Please, fill your country!',
+  },
+  phone: {
+    [FormValidationRules.Required]: 'Please, fill your phone!',
+  },
+  linkedin: {
+    [FormValidationRules.Required]: 'Please, fill your LinkedIn profile!',
+  },
+  birthday: {
+    [FormValidationRules.Required]: 'Please, fill your birthday!',
+  },
+  favorite_color: {
+    [FormValidationRules.Required]: 'Please, pick your favorite color!',
+  },
+  some_range: {
+    [FormValidationRules.Required]: 'Please, set up some range!',
+  },
+};
+
+const getError = (name: string, errors: FormErrors): string | null => {
+  return errors[name] ? validationMessages[name][errors[name][0]] : null;
 };
 
 export const RegistrationPage: React.FC = () => {
@@ -80,7 +102,7 @@ export const RegistrationPage: React.FC = () => {
           required
           pattern='^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
         />
-        {errors.email && validationMessages.email[errors.email[0]]}
+        {getError('email', errors)}
 
         <Input
           name='password'
@@ -90,7 +112,7 @@ export const RegistrationPage: React.FC = () => {
           maxLength={18}
           minLength={6}
         />
-        {errors.password && validationMessages.password[errors.password[0]]}
+        {getError('password', errors)}
 
         <Input
           name='confirm'
@@ -98,11 +120,12 @@ export const RegistrationPage: React.FC = () => {
           placeholder='Confirm password'
           required
         />
-        {errors.confirm && validationMessages.confirm[errors.confirm[0]]}
+        {getError('confirm', errors)}
 
         <Input name='age' type='number' placeholder='Your age' required />
-        {errors.age && validationMessages.age[errors.age[0]]}
+        {getError('age', errors)}
 
+        <label htmlFor='fav_language'>Choose favorite language</label>
         <div>
           <Input
             type='radio'
@@ -124,10 +147,9 @@ export const RegistrationPage: React.FC = () => {
           />
           <label htmlFor='javascript'>JavaScript</label>
         </div>
-        {errors.fav_language &&
-          validationMessages.fav_language[errors.fav_language[0]]}
+        {getError('fav_language', errors)}
 
-        <div style={{ display: 'flex', marginTop: '20px' }}>
+        <div style={{ display: 'flex' }}>
           <label htmlFor='news'>I want to receive news</label>
           <Input type='checkbox' name='news' />
         </div>
@@ -136,11 +158,38 @@ export const RegistrationPage: React.FC = () => {
           <label htmlFor='privacy'>Accept the privacy policy</label>
           <Input type='checkbox' name='privacy' required />
         </div>
-        {errors.privacy && validationMessages.privacy[errors.privacy[0]]}
+        {getError('privacy', errors)}
 
-        <button type='submit' style={{ marginTop: '20px' }}>
-          Register
-        </button>
+        <Input name='country' type='search' placeholder='Country' required />
+        {getError('country', errors)}
+
+        <Input name='phone' type='tel' placeholder='Phone number' required />
+        {getError('phone', errors)}
+
+        <Input
+          name='linkedin'
+          type='url'
+          placeholder='LinkedIn profile url'
+          required
+        />
+        {getError('linkedin', errors)}
+
+        <label htmlFor='birthday'>Your birthday</label>
+        <Input name='birthday' type='date' required />
+        {getError('birthday', errors)}
+
+        <label htmlFor='favorite_color'>Pick your favorite color</label>
+        <Input name='favorite_color' type='color' required />
+        {getError('favorite_color', errors)}
+
+        <label htmlFor='some_range'>Set up some range</label>
+        <Input name='some_range' type='range' min={0} max={5} required />
+        {getError('some_range', errors)}
+
+        <div style={{ display: 'flex', marginTop: '20px' }}>
+          <button type='submit'>Register</button>
+          {/* <Input type='reset' value='Reset' /> */}
+        </div>
       </Form>
     </div>
   );

@@ -50,7 +50,21 @@ export type TextInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'name' | 'value' | 'type'
 > & {
-  type: 'text' | 'password' | 'number' | 'email' | 'search' | 'tel' | 'url';
+  type:
+    | 'text'
+    | 'password'
+    | 'number'
+    | 'email'
+    | 'search'
+    | 'tel'
+    | 'url'
+    | 'date'
+    | 'datetime-local'
+    | 'month'
+    | 'week'
+    | 'range'
+    | 'color'
+    | 'time';
   name: string;
   value?: string;
 };
