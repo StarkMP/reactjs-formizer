@@ -12,14 +12,22 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   ...other
 }) => {
   const [controlledValue, setControlledValue] = useState<boolean>(checked);
-  const { updateValue, updateErrors, initRules, onFieldChange, fields } =
+  const { updateValue, updateErrors, initialize, onFieldChange, fields } =
     useContext(FormContext);
 
   useEffect(() => {
-    initRules(name, {
-      [FormValidationRules.Required]: required,
-      // [FormValidationRules.Custom]: custom,
+    initialize(name, {
+      rules: {
+        [FormValidationRules.Required]: required,
+        // [FormValidationRules.Custom]: custom,
+      },
+      reset: () => {
+        setControlledValue(checked);
+        updateValue(name, checked);
+        updateErrors(name, []);
+      },
     });
+
     updateValue(name, checked);
   }, []);
 

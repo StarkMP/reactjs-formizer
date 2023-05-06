@@ -1,9 +1,16 @@
-import { FieldError, FieldRules, FieldValue, FormFields } from '../types';
+import {
+  FieldError,
+  FieldInitParams,
+  FieldResetHandler,
+  FieldRules,
+  FieldValue,
+  FormFields,
+} from '../types';
 
 enum ActionTypes {
   UpdateValue = 0,
   UpdateErrors,
-  InitRules,
+  Initialize,
 }
 
 type UpdateValueAction = {
@@ -22,15 +29,16 @@ type UpdateErrorsAction = {
   };
 };
 
-type InitRulesAction = {
-  type: ActionTypes.InitRules;
+type InitializeAction = {
+  type: ActionTypes.Initialize;
   payload: {
     name: string;
     rules: FieldRules;
+    reset: FieldResetHandler;
   };
 };
 
-type Action = UpdateValueAction | UpdateErrorsAction | InitRulesAction;
+type Action = UpdateValueAction | UpdateErrorsAction | InitializeAction;
 
 export const updateValue = (
   name: string,
@@ -48,12 +56,12 @@ export const updateErrors = (
   payload: { name, errors },
 });
 
-export const initRules = (
+export const initialize = (
   name: string,
-  rules: FieldRules
-): InitRulesAction => ({
-  type: ActionTypes.InitRules,
-  payload: { name, rules },
+  { rules, reset }: FieldInitParams
+): InitializeAction => ({
+  type: ActionTypes.Initialize,
+  payload: { name, rules, reset },
 });
 
 export const fieldsReducer = (
@@ -75,11 +83,33 @@ export const fieldsReducer = (
       return { ...state, [name]: { ...field, errors } };
     }
 
-    case ActionTypes.InitRules: {
-      const { name, rules } = action.payload;
+    case ActionTypes.Initialize: {
+      const { name, rules, reset } = action.payload;
       const field = state[name] || {};
+      const newField = { ...field };
 
-      return { ...state, [name]: { ...field, rules } };
+      // TODO: refactor
+      // hack for 'radio' input type
+      if (field.reset) {
+        const fn = field.reset.bind({});
+
+        newField.reset = (): void => {
+          fn();
+          reset();
+        };
+      } else {
+        newField.reset = reset;
+      }
+
+      if (!field.rules) {
+        newField.rules = rules;
+      } else {
+        newField.rules = field.rules;
+      }
+
+      return { ...state, [name]: newField };
+
+      // return { ...state, [name]: { ...field, rules, reset } };
     }
 
     default:

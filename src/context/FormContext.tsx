@@ -1,20 +1,14 @@
-import React, {
-  createContext,
-  ReactNode,
-  useEffect,
-  useReducer,
-  useRef,
-} from 'react';
+import React, { createContext, ReactNode, useReducer } from 'react';
 
 import {
   fieldsReducer,
-  initRules as initRulesAction,
+  initialize as initializeAction,
   updateErrors as updateErrorsAction,
   updateValue as updateValueAction,
 } from '../reducers/fields';
 import {
   FieldError,
-  FieldRules,
+  FieldInitParams,
   FieldsChangeHandler,
   FieldValue,
   FormFields,
@@ -24,11 +18,12 @@ import { formatFieldsData } from '../utils/format';
 export type FormContextProps = {
   updateValue: (name: string, value: FieldValue) => void;
   updateErrors: (name: string, errors: FieldError[]) => void;
-  initRules: (name: string, rules: FieldRules) => void;
+  initialize: (name: string, params: FieldInitParams) => void;
   onFieldChange: (
     name: string,
     data: { value: FieldValue; errors: FieldError[] }
   ) => void;
+  reset: () => void;
   fields: FormFields;
 };
 
@@ -38,8 +33,9 @@ export const FormContext = Context;
 
 export const FormProvider: React.FC<{
   onFieldsChange?: FieldsChangeHandler;
+  onReset: () => void;
   children: ReactNode;
-}> = ({ onFieldsChange, children }) => {
+}> = ({ onFieldsChange, onReset, children }) => {
   const [fields, dispatch] = useReducer(fieldsReducer, {});
 
   const updateValue = (name: string, value: FieldValue): void => {
@@ -50,8 +46,8 @@ export const FormProvider: React.FC<{
     dispatch(updateErrorsAction(name, errorsArray));
   };
 
-  const initRules = (name: string, rules: FieldRules): void => {
-    dispatch(initRulesAction(name, rules));
+  const initialize = (name: string, params: FieldInitParams): void => {
+    dispatch(initializeAction(name, params));
   };
 
   const onFieldChange = (
@@ -69,13 +65,22 @@ export const FormProvider: React.FC<{
     );
   };
 
+  const reset = (): void => {
+    Object.keys(fields).forEach((name) => {
+      fields[name].reset();
+    });
+
+    onReset();
+  };
+
   return (
     <FormContext.Provider
       value={{
         updateValue,
         updateErrors,
-        initRules,
+        initialize,
         onFieldChange,
+        reset,
         fields,
       }}
     >

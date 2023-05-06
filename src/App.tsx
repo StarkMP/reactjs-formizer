@@ -89,6 +89,7 @@ export const RegistrationPage: React.FC = () => {
         onSubmit={handleSubmit}
         onValidationFailed={handleValidationFailed}
         onFieldsChange={handleFieldsChange}
+        resetOnSubmit
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -151,7 +152,7 @@ export const RegistrationPage: React.FC = () => {
 
         <div style={{ display: 'flex' }}>
           <label htmlFor='news'>I want to receive news</label>
-          <Input type='checkbox' name='news' />
+          <Input type='checkbox' name='news' checked />
         </div>
 
         <div style={{ display: 'flex' }}>

@@ -7,6 +7,7 @@ export type FieldData = {
   value: FieldValue;
   errors: FieldError[];
   rules: FieldRules;
+  reset: FieldResetHandler;
 };
 
 export type FormFields = { [fieldName: string]: FieldData };
@@ -18,6 +19,8 @@ export type FieldsData = {
   errors: FormErrors;
   values: FormValues;
 };
+
+export type FieldInitParams = { rules: FieldRules; reset: FieldResetHandler };
 
 export enum FormValidationRules {
   Required = 'required',
@@ -45,6 +48,7 @@ export type SubmitHandlerParams = {
 export type SubmitHandler = (params: SubmitHandlerParams) => void;
 export type ValidationFailedHandler = (params: SubmitHandlerParams) => void;
 export type FieldsChangeHandler = (data: FieldsData) => void;
+export type FieldResetHandler = () => void;
 
 export type TextInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,

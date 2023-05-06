@@ -15,7 +15,7 @@ const TextInput: React.FC<TextInputProps> = ({
   ...other
 }) => {
   const [controlledValue, setControlledValue] = useState<string>(value || '');
-  const { updateValue, updateErrors, initRules, onFieldChange, fields } =
+  const { updateValue, updateErrors, initialize, onFieldChange, fields } =
     useContext(FormContext);
 
   useEffect(() => {
@@ -27,7 +27,15 @@ const TextInput: React.FC<TextInputProps> = ({
       // [FormValidationRules.Custom]: custom,
     };
 
-    initRules(name, rules);
+    initialize(name, {
+      rules,
+      reset: () => {
+        setControlledValue(value || '');
+        updateValue(name, value);
+        updateErrors(name, []);
+      },
+    });
+
     updateValue(name, controlledValue);
   }, []);
 

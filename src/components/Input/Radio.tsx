@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { FormContext } from '../../context';
 import { FormValidationRules, RadioInputProps } from '../../types';
@@ -9,27 +9,35 @@ const RadioInput: React.FC<RadioInputProps> = ({
   name,
   value,
   required,
-  defaultChecked,
+  checked = false,
   ...other
 }) => {
-  const { updateValue, updateErrors, initRules, onFieldChange, fields } =
+  const [controlledValue, setControlledValue] = useState<boolean>(checked);
+  const { updateValue, updateErrors, initialize, onFieldChange, fields } =
     useContext(FormContext);
 
   useEffect(() => {
-    if (required) {
-      initRules(name, {
+    initialize(name, {
+      rules: {
         [FormValidationRules.Required]: required,
         // [FormValidationRules.Custom]: custom,
-      });
-    }
+      },
+      reset: () => {
+        setControlledValue(checked);
+        updateValue(name, checked);
+        updateErrors(name, []);
+      },
+    });
 
-    if (defaultChecked) {
+    if (checked) {
       updateValue(name, value);
     }
   }, []);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const value = e.currentTarget.value;
+    const checked = e.currentTarget.checked;
+
+    setControlledValue(checked);
 
     if (onChange) {
       onChange(e);
@@ -49,7 +57,7 @@ const RadioInput: React.FC<RadioInputProps> = ({
       name={name}
       onChange={handleChange}
       value={value}
-      defaultChecked={defaultChecked}
+      checked={controlledValue}
     />
   );
 };

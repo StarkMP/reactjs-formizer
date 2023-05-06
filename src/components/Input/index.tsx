@@ -41,6 +41,9 @@ const Input: React.FC<InputProps> = ({ type = 'text', ...other }) => {
     // case 'hidden':
     //   return;
 
+    // case 'reset':
+    //   return <ResetInput {...(other as ResetInputProps)} type={type} />;
+
     default:
       return <input type={type} {...other} />;
   }
