@@ -189,7 +189,7 @@ export const RegistrationPage: React.FC = () => {
 
         <div style={{ display: 'flex', marginTop: '20px' }}>
           <button type='submit'>Register</button>
-          {/* <Input type='reset' value='Reset' /> */}
+          <Input type='reset' value='Reset' />
         </div>
       </Form>
     </div>

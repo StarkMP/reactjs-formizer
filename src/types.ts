@@ -89,3 +89,11 @@ export type CheckboxInputProps = Omit<
   type: 'checkbox';
   name: string;
 };
+
+export type ResetInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'name' | 'value' | 'type'
+> & {
+  type: 'reset';
+  value?: string;
+};
