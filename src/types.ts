@@ -97,3 +97,13 @@ export type ResetInputProps = Omit<
   type: 'reset';
   value?: string;
 };
+
+export type HiddenInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'name' | 'value' | 'type' | 'onReset'
+> & {
+  name: string;
+  type: 'hidden';
+  value?: string;
+  onReset?: () => void;
+};

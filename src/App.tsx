@@ -55,6 +55,9 @@ const validationMessages: {
   some_range: {
     [FormValidationRules.Required]: 'Please, set up some range!',
   },
+  counter: {
+    [FormValidationRules.Required]: 'Please, set up counter!',
+  },
 };
 
 const getError = (name: string, errors: FormErrors): string | null => {
@@ -63,6 +66,7 @@ const getError = (name: string, errors: FormErrors): string | null => {
 
 export const RegistrationPage: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
+  const [count, setCount] = useState<number>(0);
 
   const handleSubmit: SubmitHandler = ({ data }): void => {
     console.log('onSubmit', data);
@@ -186,6 +190,30 @@ export const RegistrationPage: React.FC = () => {
         <label htmlFor='some_range'>Set up some range</label>
         <Input name='some_range' type='range' min={0} max={5} required />
         {getError('some_range', errors)}
+
+        <div>
+          <span>{String(count === 0 ? '' : count)}</span>
+          <button
+            type='button'
+            onClick={(): void => setCount((prev) => prev + 1)}
+          >
+            +
+          </button>
+          <button
+            type='button'
+            onClick={(): void => setCount((prev) => prev - 1)}
+          >
+            -
+          </button>
+          <Input
+            name='counter'
+            type='hidden'
+            value={String(count === 0 ? '' : count)}
+            onReset={(): void => setCount(0)}
+            required
+          />
+        </div>
+        {getError('counter', errors)}
 
         <div style={{ display: 'flex', marginTop: '20px' }}>
           <button type='submit'>Register</button>

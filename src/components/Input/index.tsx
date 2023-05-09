@@ -2,11 +2,13 @@ import React from 'react';
 
 import {
   CheckboxInputProps,
+  HiddenInputProps,
   RadioInputProps,
   ResetInputProps,
   TextInputProps,
 } from '../../types';
 import CheckboxInput from './Checkbox';
+import HiddenInput from './Hidden';
 import RadioInput from './Radio';
 import ResetInput from './Reset';
 import TextInput from './Text';
@@ -15,7 +17,8 @@ export type InputProps =
   | TextInputProps
   | RadioInputProps
   | CheckboxInputProps
-  | ResetInputProps;
+  | ResetInputProps
+  | HiddenInputProps;
 
 const Input: React.FC<InputProps> = ({ type = 'text', ...other }) => {
   switch (type) {
@@ -44,8 +47,8 @@ const Input: React.FC<InputProps> = ({ type = 'text', ...other }) => {
     // case 'file':
     //   return;
 
-    // case 'hidden':
-    //   return;
+    case 'hidden':
+      return <HiddenInput {...(other as HiddenInputProps)} type={type} />;
 
     case 'reset':
       return <ResetInput {...(other as ResetInputProps)} type={type} />;
