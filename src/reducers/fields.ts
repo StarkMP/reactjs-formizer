@@ -3,6 +3,7 @@ import {
   FieldInitParams,
   FieldResetHandler,
   FieldRules,
+  FieldSetHandler,
   FieldValue,
   FormFields,
 } from '../types';
@@ -35,6 +36,7 @@ type InitializeAction = {
     name: string;
     rules: FieldRules;
     reset: FieldResetHandler;
+    set: FieldSetHandler;
   };
 };
 
@@ -58,10 +60,10 @@ export const updateErrors = (
 
 export const initialize = (
   name: string,
-  { rules, reset }: FieldInitParams
+  { rules, reset, set }: FieldInitParams
 ): InitializeAction => ({
   type: ActionTypes.Initialize,
-  payload: { name, rules, reset },
+  payload: { name, rules, reset, set },
 });
 
 export const fieldsReducer = (
@@ -84,9 +86,9 @@ export const fieldsReducer = (
     }
 
     case ActionTypes.Initialize: {
-      const { name, rules, reset } = action.payload;
+      const { name, rules, reset, set } = action.payload;
       const field = state[name] || {};
-      const newField = { ...field };
+      const newField = { ...field, set };
 
       // TODO: refactor
       // hack for 'radio' input type
@@ -99,6 +101,17 @@ export const fieldsReducer = (
         };
       } else {
         newField.reset = reset;
+      }
+
+      if (field.set) {
+        const fn = field.set.bind({});
+
+        newField.set = (value: FieldValue): void => {
+          fn(value);
+          set(value);
+        };
+      } else {
+        newField.set = set;
       }
 
       if (!field.rules) {

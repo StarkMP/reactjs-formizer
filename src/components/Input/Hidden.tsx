@@ -12,20 +12,21 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
   maxLength,
   minLength,
   pattern,
+  custom,
   ...other
 }) => {
   const { updateValue, updateErrors, initialize, onFieldChange, fields } =
     useContext(FormContext);
 
-  useEffect(() => {
-    const rules: FieldRules = {
-      [FormValidationRules.Required]: required,
-      [FormValidationRules.MaxLength]: maxLength,
-      [FormValidationRules.MinLength]: minLength,
-      [FormValidationRules.Pattern]: pattern,
-      // [FormValidationRules.Custom]: custom,
-    };
+  const rules: FieldRules = {
+    [FormValidationRules.Required]: required,
+    [FormValidationRules.MaxLength]: maxLength,
+    [FormValidationRules.MinLength]: minLength,
+    [FormValidationRules.Pattern]: pattern,
+    [FormValidationRules.Custom]: custom,
+  };
 
+  useEffect(() => {
     initialize(name, {
       rules,
       reset: () => {
@@ -37,6 +38,7 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
         updateValue(name, value);
         updateErrors(name, []);
       },
+      set: () => {},
     });
 
     updateValue(name, value);
@@ -46,7 +48,7 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
     if (fields[name]) {
       updateValue(name, value);
 
-      const errors = getValidationErrors(value, fields[name].rules);
+      const errors = getValidationErrors(value, rules);
 
       updateErrors(name, errors);
       onFieldChange(name, { value, errors });

@@ -8,6 +8,7 @@ export type FieldData = {
   errors: FieldError[];
   rules: FieldRules;
   reset: FieldResetHandler;
+  set: FieldSetHandler;
 };
 
 export type FormFields = { [fieldName: string]: FieldData };
@@ -15,12 +16,18 @@ export type FormFields = { [fieldName: string]: FieldData };
 export type FormValues = { [fieldName: string]: FieldValue };
 export type FormErrors = { [fieldName: string]: FieldError[] };
 
+export type FormRegister = (data: FieldsData, changeValue: any) => void;
+
 export type FieldsData = {
   errors: FormErrors;
   values: FormValues;
 };
 
-export type FieldInitParams = { rules: FieldRules; reset: FieldResetHandler };
+export type FieldInitParams = {
+  rules: FieldRules;
+  reset: FieldResetHandler;
+  set: FieldSetHandler;
+};
 
 export enum FormValidationRules {
   Required = 'required',
@@ -30,7 +37,7 @@ export enum FormValidationRules {
   Custom = 'custom',
 }
 
-export type FieldCustomValidationRule = (value: FieldValue) => boolean;
+export type FieldCustomValidationRule = (value: FieldValue) => boolean | string;
 
 export type FieldRules = {
   [FormValidationRules.Required]?: boolean;
@@ -49,6 +56,7 @@ export type SubmitHandler = (params: SubmitHandlerParams) => void;
 export type ValidationFailedHandler = (params: SubmitHandlerParams) => void;
 export type FieldsChangeHandler = (data: FieldsData) => void;
 export type FieldResetHandler = () => void;
+export type FieldSetHandler = (value: FieldValue) => void;
 
 export type TextInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -71,6 +79,7 @@ export type TextInputProps = Omit<
     | 'time';
   name: string;
   value?: string;
+  custom?: FieldCustomValidationRule;
 };
 
 export type RadioInputProps = Omit<
@@ -80,6 +89,7 @@ export type RadioInputProps = Omit<
   type: 'radio';
   name: string;
   value: string;
+  custom?: FieldCustomValidationRule;
 };
 
 export type CheckboxInputProps = Omit<
@@ -88,6 +98,7 @@ export type CheckboxInputProps = Omit<
 > & {
   type: 'checkbox';
   name: string;
+  custom?: FieldCustomValidationRule;
 };
 
 export type ResetInputProps = Omit<
@@ -96,6 +107,7 @@ export type ResetInputProps = Omit<
 > & {
   type: 'reset';
   value?: string;
+  custom?: FieldCustomValidationRule;
 };
 
 export type HiddenInputProps = Omit<
@@ -106,4 +118,5 @@ export type HiddenInputProps = Omit<
   type: 'hidden';
   value?: string;
   onReset?: () => void;
+  custom?: FieldCustomValidationRule;
 };

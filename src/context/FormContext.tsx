@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useReducer } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useEffect,
+  useReducer,
+  useRef,
+} from 'react';
 
 import {
   fieldsReducer,
@@ -12,6 +18,7 @@ import {
   FieldsChangeHandler,
   FieldValue,
   FormFields,
+  FormRegister,
 } from '../types';
 import { formatFieldsData } from '../utils/format';
 
@@ -24,6 +31,7 @@ export type FormContextProps = {
     data: { value: FieldValue; errors: FieldError[] }
   ) => void;
   reset: () => void;
+  set: (name: string, value: FieldValue) => void;
   fields: FormFields;
 };
 
@@ -34,9 +42,11 @@ export const FormContext = Context;
 export const FormProvider: React.FC<{
   onFieldsChange?: FieldsChangeHandler;
   onReset: () => void;
+  register?: FormRegister;
   children: ReactNode;
-}> = ({ onFieldsChange, onReset, children }) => {
+}> = ({ onFieldsChange, onReset, register, children }) => {
   const [fields, dispatch] = useReducer(fieldsReducer, {});
+  const fieldsRef = useRef<FormFields>({});
 
   const updateValue = (name: string, value: FieldValue): void => {
     dispatch(updateValueAction(name, value));
@@ -61,7 +71,10 @@ export const FormProvider: React.FC<{
     const prevField = fields[name];
 
     onFieldsChange(
-      formatFieldsData({ ...fields, [name]: { ...prevField, value, errors } })
+      formatFieldsData({
+        ...fieldsRef.current,
+        [name]: { ...prevField, value, errors },
+      })
     );
   };
 
@@ -73,6 +86,22 @@ export const FormProvider: React.FC<{
     onReset();
   };
 
+  const set = (name: string, value: FieldValue): void => {
+    if (!fields[name]) {
+      return;
+    }
+
+    fields[name].set(value);
+  };
+
+  useEffect(() => {
+    if (register) {
+      register(formatFieldsData(fields), set);
+    }
+
+    fieldsRef.current = fields;
+  }, [fields]);
+
   return (
     <FormContext.Provider
       value={{
@@ -81,6 +110,7 @@ export const FormProvider: React.FC<{
         initialize,
         onFieldChange,
         reset,
+        set,
         fields,
       }}
     >

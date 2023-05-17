@@ -11,20 +11,28 @@ export const getValidationErrors = (
 ): FieldError[] => {
   const errors = [];
 
+  const required = rules[FormValidationRules.Required];
   const maxLength = rules[FormValidationRules.MaxLength];
   const minLength = rules[FormValidationRules.MinLength];
   const pattern = rules[FormValidationRules.Pattern];
   const customFn = rules[FormValidationRules.Custom];
 
   if (
-    rules[FormValidationRules.Required] == true &&
+    required == true &&
     (value === undefined || value === '' || value === false)
   ) {
     errors.push(FormValidationRules.Required);
   }
 
-  if (customFn !== undefined && customFn(value) !== true) {
-    errors.push(FormValidationRules.Custom);
+  if (customFn !== undefined) {
+    const customValidationResult = customFn(value);
+
+    if (
+      customValidationResult !== true &&
+      typeof customValidationResult === 'string'
+    ) {
+      errors.push(customValidationResult);
+    }
   }
 
   if (typeof value !== 'string') {

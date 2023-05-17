@@ -9,6 +9,7 @@ import { FormContext, FormProvider } from '../../context';
 import {
   FieldsChangeHandler,
   FormErrors,
+  FormRegister,
   SubmitHandler,
   ValidationFailedHandler,
 } from '../../types';
@@ -23,12 +24,14 @@ export type FormProps = Omit<
   onSubmit?: SubmitHandler;
   onFieldsChange?: FieldsChangeHandler;
   resetOnSubmit?: boolean;
+  register?: FormRegister;
 };
 
 const Form: React.FC<FormProps> = ({
   onSubmit,
   onValidationFailed,
   onFieldsChange,
+  register,
   children,
   ...other
 }) => {
@@ -43,7 +46,11 @@ const Form: React.FC<FormProps> = ({
   };
 
   return (
-    <FormProvider onFieldsChange={onFieldsChange} onReset={onReset}>
+    <FormProvider
+      onFieldsChange={onFieldsChange}
+      onReset={onReset}
+      register={register}
+    >
       <FormComponent
         {...other}
         onSubmit={onSubmit}

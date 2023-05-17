@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
+  FieldCustomValidationRule,
   FieldsChangeHandler,
   Form,
-  FormErrors,
   FormValidationRules,
   Input,
   SubmitHandler,
   ValidationFailedHandler,
 } from '.';
+import { useFormizer } from './hooks/useFormizer';
 
 const validationMessages: {
   [fieldName: string]: { [ruleName: string]: string };
@@ -27,6 +28,7 @@ const validationMessages: {
   },
   confirm: {
     [FormValidationRules.Required]: 'Please confirm the password!',
+    invalid: 'Invalid confirmation!',
   },
   age: {
     [FormValidationRules.Required]: 'The age is required!',
@@ -60,29 +62,26 @@ const validationMessages: {
   },
 };
 
-const getError = (name: string, errors: FormErrors): string | null => {
-  return errors[name] ? validationMessages[name][errors[name][0]] : null;
+const getError = (name: string, fieldErrors: string[]): string | null => {
+  return fieldErrors && fieldErrors.length > 0
+    ? validationMessages[name][fieldErrors[0]]
+    : null;
 };
 
 export const RegistrationPage: React.FC = () => {
-  const [errors, setErrors] = useState<FormErrors>({});
   const [count, setCount] = useState<number>(0);
+
+  const { register, getValue, getErrors, setValue } = useFormizer();
 
   const handleSubmit: SubmitHandler = ({ data }): void => {
     console.log('onSubmit', data);
   };
 
   const handleValidationFailed: ValidationFailedHandler = ({ data }): void => {
-    const { errors } = data;
-
-    setErrors(errors);
-
     console.log('onValidationFailed', data);
   };
 
   const handleFieldsChange: FieldsChangeHandler = ({ values, errors }) => {
-    setErrors(errors);
-
     console.log('onFieldsChange', { values, errors });
   };
 
@@ -99,6 +98,7 @@ export const RegistrationPage: React.FC = () => {
           flexDirection: 'column',
           maxWidth: '300px',
         }}
+        register={register}
       >
         <Input
           name='email'
@@ -107,7 +107,7 @@ export const RegistrationPage: React.FC = () => {
           required
           pattern='^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
         />
-        {getError('email', errors)}
+        {getError('email', getErrors('email'))}
 
         <Input
           name='password'
@@ -116,19 +116,31 @@ export const RegistrationPage: React.FC = () => {
           required
           maxLength={18}
           minLength={6}
+          onChange={(e): void => setValue('confirm', e.currentTarget.value)}
         />
-        {getError('password', errors)}
+        {getError('password', getErrors('password'))}
 
         <Input
           name='confirm'
           type='password'
           placeholder='Confirm password'
           required
+          // custom={
+          //   ((value) => {
+          //     console.log(value, getValue('password'));
+
+          //     if (value === getValue('password')) {
+          //       return true;
+          //     }
+
+          //     return 'invalid';
+          //   }) as FieldCustomValidationRule
+          // }
         />
-        {getError('confirm', errors)}
+        {getError('confirm', getErrors('confirm'))}
 
         <Input name='age' type='number' placeholder='Your age' required />
-        {getError('age', errors)}
+        {getError('age', getErrors('age'))}
 
         <label htmlFor='fav_language'>Choose favorite language</label>
         <div>
@@ -152,7 +164,7 @@ export const RegistrationPage: React.FC = () => {
           />
           <label htmlFor='javascript'>JavaScript</label>
         </div>
-        {getError('fav_language', errors)}
+        {getError('fav_language', getErrors('fav_language'))}
 
         <div style={{ display: 'flex' }}>
           <label htmlFor='news'>I want to receive news</label>
@@ -163,13 +175,13 @@ export const RegistrationPage: React.FC = () => {
           <label htmlFor='privacy'>Accept the privacy policy</label>
           <Input type='checkbox' name='privacy' required />
         </div>
-        {getError('privacy', errors)}
+        {getError('privacy', getErrors('privacy'))}
 
         <Input name='country' type='search' placeholder='Country' required />
-        {getError('country', errors)}
+        {getError('country', getErrors('country'))}
 
         <Input name='phone' type='tel' placeholder='Phone number' required />
-        {getError('phone', errors)}
+        {getError('phone', getErrors('phone'))}
 
         <Input
           name='linkedin'
@@ -177,25 +189,28 @@ export const RegistrationPage: React.FC = () => {
           placeholder='LinkedIn profile url'
           required
         />
-        {getError('linkedin', errors)}
+        {getError('linkedin', getErrors('linkedin'))}
 
         <label htmlFor='birthday'>Your birthday</label>
         <Input name='birthday' type='date' required />
-        {getError('birthday', errors)}
+        {getError('birthday', getErrors('birthday'))}
 
         <label htmlFor='favorite_color'>Pick your favorite color</label>
         <Input name='favorite_color' type='color' required />
-        {getError('favorite_color', errors)}
+        {getError('favorite_color', getErrors('favorite_color'))}
 
         <label htmlFor='some_range'>Set up some range</label>
         <Input name='some_range' type='range' min={0} max={5} required />
-        {getError('some_range', errors)}
+        {getError('some_range', getErrors('some_range'))}
 
         <div>
           <span>{String(count === 0 ? '' : count)}</span>
           <button
             type='button'
-            onClick={(): void => setCount((prev) => prev + 1)}
+            onClick={(): void => {
+              setCount((prev) => prev + 1);
+              setValue('age', count + 1);
+            }}
           >
             +
           </button>
@@ -213,7 +228,7 @@ export const RegistrationPage: React.FC = () => {
             required
           />
         </div>
-        {getError('counter', errors)}
+        {getError('counter', getErrors('counter'))}
 
         <div style={{ display: 'flex', marginTop: '20px' }}>
           <button type='submit'>Register</button>

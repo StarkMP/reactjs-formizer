@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { FormContext } from '../../context';
-import { CheckboxInputProps, FormValidationRules } from '../../types';
+import {
+  CheckboxInputProps,
+  FieldRules,
+  FormValidationRules,
+} from '../../types';
 import { getValidationErrors } from '../../utils/validation';
 
 const CheckboxInput: React.FC<CheckboxInputProps> = ({
@@ -9,22 +13,33 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   name,
   checked = false,
   required,
+  custom,
   ...other
 }) => {
   const [controlledValue, setControlledValue] = useState<boolean>(checked);
-  const { updateValue, updateErrors, initialize, onFieldChange, fields } =
+  const { updateValue, updateErrors, initialize, onFieldChange } =
     useContext(FormContext);
+
+  const rules: FieldRules = {
+    [FormValidationRules.Required]: required,
+    [FormValidationRules.Custom]: custom,
+  };
 
   useEffect(() => {
     initialize(name, {
-      rules: {
-        [FormValidationRules.Required]: required,
-        // [FormValidationRules.Custom]: custom,
-      },
+      rules,
       reset: () => {
         setControlledValue(checked);
         updateValue(name, checked);
         updateErrors(name, []);
+      },
+      set: (checked) => {
+        setControlledValue(checked as boolean);
+        updateValue(name, checked);
+
+        const errors = getValidationErrors(checked, rules);
+
+        updateErrors(name, errors);
       },
     });
 
@@ -42,7 +57,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 
     updateValue(name, value);
 
-    const errors = getValidationErrors(value, fields[name].rules);
+    const errors = getValidationErrors(value, rules);
 
     updateErrors(name, errors);
     onFieldChange(name, { value, errors });

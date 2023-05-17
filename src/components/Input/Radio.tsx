@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { FormContext } from '../../context';
-import { FormValidationRules, RadioInputProps } from '../../types';
+import { FieldRules, FormValidationRules, RadioInputProps } from '../../types';
 import { getValidationErrors } from '../../utils/validation';
 
 const RadioInput: React.FC<RadioInputProps> = ({
@@ -10,22 +10,38 @@ const RadioInput: React.FC<RadioInputProps> = ({
   value,
   required,
   checked = false,
+  custom,
   ...other
 }) => {
   const [controlledValue, setControlledValue] = useState<boolean>(checked);
-  const { updateValue, updateErrors, initialize, onFieldChange, fields } =
+  const { updateValue, updateErrors, initialize, onFieldChange } =
     useContext(FormContext);
+
+  const rules: FieldRules = {
+    [FormValidationRules.Required]: required,
+    [FormValidationRules.Custom]: custom,
+  };
 
   useEffect(() => {
     initialize(name, {
-      rules: {
-        [FormValidationRules.Required]: required,
-        // [FormValidationRules.Custom]: custom,
-      },
+      rules,
       reset: () => {
         setControlledValue(checked);
-        updateValue(name, checked);
+        updateValue(name, checked ? value : undefined);
         updateErrors(name, []);
+      },
+      set: (newValue) => {
+        const checked = newValue === value;
+
+        setControlledValue(checked);
+
+        if (checked) {
+          updateValue(name, value);
+
+          const errors = getValidationErrors(checked, rules);
+
+          updateErrors(name, errors);
+        }
       },
     });
 
@@ -45,7 +61,7 @@ const RadioInput: React.FC<RadioInputProps> = ({
 
     updateValue(name, value);
 
-    const errors = getValidationErrors(value, fields[name].rules);
+    const errors = getValidationErrors(value, rules);
 
     updateErrors(name, errors);
     onFieldChange(name, { value, errors });
