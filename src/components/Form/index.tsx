@@ -35,26 +35,11 @@ const Form: React.FC<FormProps> = ({
   children,
   ...other
 }) => {
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const onReset = (): void => {
-    if (!formRef.current) {
-      return;
-    }
-
-    formRef.current.reset();
-  };
-
   return (
-    <FormProvider
-      onFieldsChange={onFieldsChange}
-      onReset={onReset}
-      register={register}
-    >
+    <FormProvider onFieldsChange={onFieldsChange} register={register}>
       <FormComponent
         {...other}
         onSubmit={onSubmit}
-        formRef={formRef}
         onValidationFailed={onValidationFailed}
       >
         {children}
@@ -63,12 +48,9 @@ const Form: React.FC<FormProps> = ({
   );
 };
 
-const FormComponent: React.FC<
-  Omit<FormProps, 'onFieldsChange'> & { formRef: any }
-> = ({
+const FormComponent: React.FC<Omit<FormProps, 'onFieldsChange'>> = ({
   onSubmit,
   onValidationFailed,
-  formRef,
   resetOnSubmit,
   children,
   ...other
@@ -115,7 +97,7 @@ const FormComponent: React.FC<
   };
 
   return (
-    <form ref={formRef} noValidate {...other} onSubmit={handleSubmit}>
+    <form noValidate {...other} onSubmit={handleSubmit}>
       {children}
     </form>
   );

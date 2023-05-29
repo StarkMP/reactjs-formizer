@@ -9,9 +9,7 @@ type UseFormizerParams = {
   getErrors: (name: string) => FieldError[];
 };
 
-export const useFormizer = <
-  T extends { [name: string]: FieldValue }
->(): UseFormizerParams => {
+export const useFormizer = (): UseFormizerParams => {
   // hack for force render
   const [, setState] = useState(false);
 

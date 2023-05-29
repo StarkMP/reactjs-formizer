@@ -5,17 +5,18 @@ import { FieldRules, FormValidationRules, HiddenInputProps } from '../../types';
 import { getValidationErrors } from '../../utils/validation';
 
 const HiddenInput: React.FC<HiddenInputProps> = ({
-  onReset,
+  type,
   name,
   value = '',
   required,
   maxLength,
   minLength,
   pattern,
+  onReset,
   custom,
   ...other
 }) => {
-  const { updateValue, updateErrors, initialize, onFieldChange, fields } =
+  const { fields, updateValue, updateErrors, initialize, onFieldChange } =
     useContext(FormContext);
 
   const rules: FieldRules = {
@@ -28,8 +29,10 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
 
   useEffect(() => {
     initialize(name, {
+      type,
+      defaultValue: value,
       rules,
-      reset: () => {
+      onReset: () => {
         if (onReset === undefined) {
           return;
         }
@@ -38,10 +41,7 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
         updateValue(name, value);
         updateErrors(name, []);
       },
-      set: () => {},
     });
-
-    updateValue(name, value);
   }, []);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
     }
   }, [value]);
 
-  return <input {...other} name={name} value={value} />;
+  return <input {...other} type={type} name={name} value={value} />;
 };
 
 export default HiddenInput;

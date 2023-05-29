@@ -1,19 +1,30 @@
 import type { InputHTMLAttributes, SyntheticEvent } from 'react';
 
-export type FieldValue = string | number | boolean | undefined;
+export type FieldValue = string | number | boolean | File[] | null;
+
 export type FieldError = string;
 
 export type FieldData = {
+  type: string;
+  defaultValue: FieldValue;
   value: FieldValue;
   errors: FieldError[];
   rules: FieldRules;
-  reset: FieldResetHandler;
-  set: FieldSetHandler;
+  onReset?: FieldResetHandler;
+};
+
+export type FieldInitData = {
+  type: string;
+  defaultValue: FieldValue;
+  errors?: FieldError[];
+  rules?: FieldRules;
+  onReset?: FieldResetHandler;
 };
 
 export type FormFields = { [fieldName: string]: FieldData };
 
 export type FormValues = { [fieldName: string]: FieldValue };
+
 export type FormErrors = { [fieldName: string]: FieldError[] };
 
 export type FormRegister = (data: FieldsData, changeValue: any) => void;
@@ -21,12 +32,6 @@ export type FormRegister = (data: FieldsData, changeValue: any) => void;
 export type FieldsData = {
   errors: FormErrors;
   values: FormValues;
-};
-
-export type FieldInitParams = {
-  rules: FieldRules;
-  reset: FieldResetHandler;
-  set: FieldSetHandler;
 };
 
 export enum FormValidationRules {
@@ -53,10 +58,12 @@ export type SubmitHandlerParams = {
 };
 
 export type SubmitHandler = (params: SubmitHandlerParams) => void;
+
 export type ValidationFailedHandler = (params: SubmitHandlerParams) => void;
+
 export type FieldsChangeHandler = (data: FieldsData) => void;
+
 export type FieldResetHandler = () => void;
-export type FieldSetHandler = (value: FieldValue) => void;
 
 export type TextInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -118,5 +125,14 @@ export type HiddenInputProps = Omit<
   type: 'hidden';
   value?: string;
   onReset?: () => void;
+  custom?: FieldCustomValidationRule;
+};
+
+export type FileInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'name' | 'value' | 'type'
+> & {
+  name: string;
+  type: 'file';
   custom?: FieldCustomValidationRule;
 };

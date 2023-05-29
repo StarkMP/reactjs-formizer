@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
-  FieldCustomValidationRule,
   FieldsChangeHandler,
   Form,
   FormValidationRules,
   Input,
   SubmitHandler,
+  useFormizer,
   ValidationFailedHandler,
 } from '.';
-import { useFormizer } from './hooks/useFormizer';
 
 const validationMessages: {
   [fieldName: string]: { [ruleName: string]: string };
@@ -153,7 +152,13 @@ export const RegistrationPage: React.FC = () => {
           />
           <label htmlFor='html'>HTML</label>
           <br />
-          <Input type='radio' id='css' name='fav_language' value='CSS' />
+          <Input
+            type='radio'
+            id='css'
+            name='fav_language'
+            value='CSS'
+            checked
+          />
           <label htmlFor='css'>CSS</label>
           <br />
           <Input
@@ -229,6 +234,10 @@ export const RegistrationPage: React.FC = () => {
           />
         </div>
         {getError('counter', getErrors('counter'))}
+
+        <label htmlFor='avatar'>Upload your avatar</label>
+        <Input name='avatar' type='file' required />
+        {getError('avatar', getErrors('avatar'))}
 
         <div style={{ display: 'flex', marginTop: '20px' }}>
           <button type='submit'>Register</button>

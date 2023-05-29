@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { FormContext } from '../../context';
 import {
@@ -9,16 +9,18 @@ import {
 import { getValidationErrors } from '../../utils/validation';
 
 const CheckboxInput: React.FC<CheckboxInputProps> = ({
-  onChange,
+  type,
   name,
   checked = false,
   required,
+  onChange,
   custom,
   ...other
 }) => {
-  const [controlledValue, setControlledValue] = useState<boolean>(checked);
-  const { updateValue, updateErrors, initialize, onFieldChange } =
+  const { fields, updateValue, updateErrors, initialize, onFieldChange } =
     useContext(FormContext);
+
+  const fieldValue = fields[name]?.value;
 
   const rules: FieldRules = {
     [FormValidationRules.Required]: required,
@@ -27,29 +29,14 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 
   useEffect(() => {
     initialize(name, {
+      type,
+      defaultValue: checked,
       rules,
-      reset: () => {
-        setControlledValue(checked);
-        updateValue(name, checked);
-        updateErrors(name, []);
-      },
-      set: (checked) => {
-        setControlledValue(checked as boolean);
-        updateValue(name, checked);
-
-        const errors = getValidationErrors(checked, rules);
-
-        updateErrors(name, errors);
-      },
     });
-
-    updateValue(name, checked);
   }, []);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const value = e.currentTarget.checked;
-
-    setControlledValue(value);
 
     if (onChange) {
       onChange(e);
@@ -66,9 +53,10 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   return (
     <input
       {...other}
+      type={type}
       name={name}
       onChange={handleChange}
-      checked={controlledValue}
+      checked={(fieldValue !== undefined ? fieldValue : checked) as boolean}
     />
   );
 };

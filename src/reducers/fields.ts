@@ -1,17 +1,11 @@
-import {
-  FieldError,
-  FieldInitParams,
-  FieldResetHandler,
-  FieldRules,
-  FieldSetHandler,
-  FieldValue,
-  FormFields,
-} from '../types';
+import { FieldError, FieldInitData, FieldValue, FormFields } from '../types';
+import { getValidationErrors } from '../utils/validation';
 
 enum ActionTypes {
   UpdateValue = 0,
   UpdateErrors,
   Initialize,
+  Reset,
 }
 
 type UpdateValueAction = {
@@ -34,13 +28,18 @@ type InitializeAction = {
   type: ActionTypes.Initialize;
   payload: {
     name: string;
-    rules: FieldRules;
-    reset: FieldResetHandler;
-    set: FieldSetHandler;
-  };
+  } & FieldInitData;
 };
 
-type Action = UpdateValueAction | UpdateErrorsAction | InitializeAction;
+type ResetAction = {
+  type: ActionTypes.Reset;
+};
+
+type Action =
+  | UpdateValueAction
+  | UpdateErrorsAction
+  | InitializeAction
+  | ResetAction;
 
 export const updateValue = (
   name: string,
@@ -60,10 +59,14 @@ export const updateErrors = (
 
 export const initialize = (
   name: string,
-  { rules, reset, set }: FieldInitParams
+  { type, defaultValue, errors, rules, onReset }: FieldInitData
 ): InitializeAction => ({
   type: ActionTypes.Initialize,
-  payload: { name, rules, reset, set },
+  payload: { type, defaultValue, errors, name, rules, onReset },
+});
+
+export const reset = (): ResetAction => ({
+  type: ActionTypes.Reset,
 });
 
 export const fieldsReducer = (
@@ -75,7 +78,14 @@ export const fieldsReducer = (
       const { name, value } = action.payload;
       const field = state[name] || {};
 
-      return { ...state, [name]: { ...field, value } };
+      return {
+        ...state,
+        [name]: {
+          ...field,
+          value,
+          errors: getValidationErrors(value, field.rules),
+        },
+      };
     }
 
     case ActionTypes.UpdateErrors: {
@@ -85,44 +95,52 @@ export const fieldsReducer = (
       return { ...state, [name]: { ...field, errors } };
     }
 
+    case ActionTypes.Reset: {
+      return Object.keys(state).reduce((memo: FormFields, current) => {
+        const field = state[current];
+
+        if (field.onReset) {
+          field.onReset();
+        }
+
+        memo[current] = { ...field, value: field.defaultValue, errors: [] };
+
+        return memo;
+      }, {});
+    }
+
     case ActionTypes.Initialize: {
-      const { name, rules, reset, set } = action.payload;
-      const field = state[name] || {};
-      const newField = { ...field, set };
+      const { name, type, errors = [], onReset } = action.payload;
+      let { rules = {}, defaultValue } = action.payload;
 
-      // TODO: refactor
-      // hack for 'radio' input type
-      if (field.reset) {
-        const fn = field.reset.bind({});
+      // this part is important because
+      // radio field has few input elements
+      // then we need to handle some params of these inputs
+      if (type === 'radio') {
+        const radioField = state[name];
 
-        newField.reset = (): void => {
-          fn();
-          reset();
-        };
-      } else {
-        newField.reset = reset;
+        if (radioField) {
+          if (radioField.rules && Object.keys(radioField.rules).length > 0) {
+            rules = radioField.rules;
+          }
+
+          if (radioField.defaultValue) {
+            defaultValue = radioField.defaultValue;
+          }
+        }
       }
 
-      if (field.set) {
-        const fn = field.set.bind({});
-
-        newField.set = (value: FieldValue): void => {
-          fn(value);
-          set(value);
-        };
-      } else {
-        newField.set = set;
-      }
-
-      if (!field.rules) {
-        newField.rules = rules;
-      } else {
-        newField.rules = field.rules;
-      }
-
-      return { ...state, [name]: newField };
-
-      // return { ...state, [name]: { ...field, rules, reset } };
+      return {
+        ...state,
+        [name]: {
+          type,
+          errors,
+          value: defaultValue,
+          rules,
+          defaultValue,
+          onReset,
+        },
+      };
     }
 
     default:

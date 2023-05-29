@@ -19,7 +19,7 @@ export const getValidationErrors = (
 
   if (
     required == true &&
-    (value === undefined || value === '' || value === false)
+    (value === undefined || value === '' || value === false || value === null)
   ) {
     errors.push(FormValidationRules.Required);
   }

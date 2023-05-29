@@ -9,12 +9,13 @@ import React, {
 import {
   fieldsReducer,
   initialize as initializeAction,
+  reset as resetAction,
   updateErrors as updateErrorsAction,
   updateValue as updateValueAction,
 } from '../reducers/fields';
 import {
   FieldError,
-  FieldInitParams,
+  FieldInitData,
   FieldsChangeHandler,
   FieldValue,
   FormFields,
@@ -25,7 +26,7 @@ import { formatFieldsData } from '../utils/format';
 export type FormContextProps = {
   updateValue: (name: string, value: FieldValue) => void;
   updateErrors: (name: string, errors: FieldError[]) => void;
-  initialize: (name: string, params: FieldInitParams) => void;
+  initialize: (name: string, params: FieldInitData) => void;
   onFieldChange: (
     name: string,
     data: { value: FieldValue; errors: FieldError[] }
@@ -41,10 +42,9 @@ export const FormContext = Context;
 
 export const FormProvider: React.FC<{
   onFieldsChange?: FieldsChangeHandler;
-  onReset: () => void;
   register?: FormRegister;
   children: ReactNode;
-}> = ({ onFieldsChange, onReset, register, children }) => {
+}> = ({ onFieldsChange, register, children }) => {
   const [fields, dispatch] = useReducer(fieldsReducer, {});
   const fieldsRef = useRef<FormFields>({});
 
@@ -56,7 +56,7 @@ export const FormProvider: React.FC<{
     dispatch(updateErrorsAction(name, errorsArray));
   };
 
-  const initialize = (name: string, params: FieldInitParams): void => {
+  const initialize = (name: string, params: FieldInitData): void => {
     dispatch(initializeAction(name, params));
   };
 
@@ -79,19 +79,17 @@ export const FormProvider: React.FC<{
   };
 
   const reset = (): void => {
-    Object.keys(fields).forEach((name) => {
-      fields[name].reset();
-    });
-
-    onReset();
+    dispatch(resetAction());
   };
 
   const set = (name: string, value: FieldValue): void => {
-    if (!fields[name]) {
+    const currentField = fields[name];
+
+    if (!currentField) {
       return;
     }
 
-    fields[name].set(value);
+    updateValue(name, value);
   };
 
   useEffect(() => {

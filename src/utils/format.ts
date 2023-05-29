@@ -6,7 +6,10 @@ export const formatFieldsData = (fields: FormFields): FieldsData => {
 
   Object.keys(fields).forEach((name) => {
     values[name] = fields[name].value;
-    errors[name] = fields[name].errors;
+
+    const fieldErrors = fields[name].errors || [];
+
+    errors[name] = fieldErrors;
   });
 
   return { values, errors };

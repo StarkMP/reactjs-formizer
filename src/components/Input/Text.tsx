@@ -1,23 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { FormContext } from '../../context';
 import { FieldRules, FormValidationRules, TextInputProps } from '../../types';
 import { getValidationErrors } from '../../utils/validation';
 
 const TextInput: React.FC<TextInputProps> = ({
-  onChange,
+  type,
   name,
-  value,
+  value = '',
   required,
   maxLength,
   minLength,
   pattern,
+  onChange,
   custom,
   ...other
 }) => {
-  const [controlledValue, setControlledValue] = useState<string>(value || '');
-  const { updateValue, updateErrors, initialize, onFieldChange, fields } =
+  const { fields, updateValue, updateErrors, initialize, onFieldChange } =
     useContext(FormContext);
+
+  const fieldValue = fields[name]?.value;
 
   const rules: FieldRules = {
     [FormValidationRules.Required]: required,
@@ -29,29 +31,14 @@ const TextInput: React.FC<TextInputProps> = ({
 
   useEffect(() => {
     initialize(name, {
+      type,
+      defaultValue: value,
       rules,
-      reset: () => {
-        setControlledValue(value || '');
-        updateValue(name, value || '');
-        updateErrors(name, []);
-      },
-      set: (value) => {
-        setControlledValue(value as string);
-        updateValue(name, value);
-
-        const errors = getValidationErrors(value, rules);
-
-        updateErrors(name, errors);
-      },
     });
-
-    updateValue(name, controlledValue);
   }, []);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const value = e.currentTarget.value;
-
-    setControlledValue(value);
 
     if (onChange) {
       onChange(e);
@@ -68,9 +55,10 @@ const TextInput: React.FC<TextInputProps> = ({
   return (
     <input
       {...other}
+      type={type}
       name={name}
       onChange={handleChange}
-      value={controlledValue}
+      value={(fieldValue !== undefined ? fieldValue : value) as string}
     />
   );
 };
