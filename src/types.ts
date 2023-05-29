@@ -72,7 +72,6 @@ export type TextInputProps = Omit<
   type:
     | 'text'
     | 'password'
-    | 'number'
     | 'email'
     | 'search'
     | 'tel'
@@ -81,11 +80,20 @@ export type TextInputProps = Omit<
     | 'datetime-local'
     | 'month'
     | 'week'
-    | 'range'
     | 'color'
     | 'time';
   name: string;
   value?: string;
+  custom?: FieldCustomValidationRule;
+};
+
+export type NumericInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'name' | 'value' | 'type'
+> & {
+  type: 'number' | 'range';
+  name: string;
+  value?: number;
   custom?: FieldCustomValidationRule;
 };
 

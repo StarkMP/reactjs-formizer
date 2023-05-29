@@ -4,6 +4,7 @@ import {
   CheckboxInputProps,
   FileInputProps,
   HiddenInputProps,
+  NumericInputProps,
   RadioInputProps,
   ResetInputProps,
   TextInputProps,
@@ -11,6 +12,7 @@ import {
 import CheckboxInput from './Checkbox';
 import FileInput from './File';
 import HiddenInput from './Hidden';
+import NumericInput from './Numeric';
 import RadioInput from './Radio';
 import ResetInput from './Reset';
 import TextInput from './Text';
@@ -21,13 +23,13 @@ export type InputProps =
   | CheckboxInputProps
   | ResetInputProps
   | HiddenInputProps
-  | FileInputProps;
+  | FileInputProps
+  | NumericInputProps;
 
 const Input: React.FC<InputProps> = ({ type = 'text', ...other }) => {
   switch (type) {
     case 'text':
     case 'password':
-    case 'number':
     case 'email':
     case 'search':
     case 'tel':
@@ -36,10 +38,13 @@ const Input: React.FC<InputProps> = ({ type = 'text', ...other }) => {
     case 'datetime-local':
     case 'month':
     case 'week':
-    case 'range':
     case 'color':
     case 'time':
       return <TextInput {...(other as TextInputProps)} type={type} />;
+
+    case 'number':
+    case 'range':
+      return <NumericInput {...(other as NumericInputProps)} type={type} />;
 
     case 'radio':
       return <RadioInput {...(other as RadioInputProps)} type={type} />;

@@ -1,9 +1,4 @@
-import React, {
-  FormHTMLAttributes,
-  SyntheticEvent,
-  useContext,
-  useRef,
-} from 'react';
+import React, { FormHTMLAttributes, SyntheticEvent, useContext } from 'react';
 
 import { FormContext, FormProvider } from '../../context';
 import {
