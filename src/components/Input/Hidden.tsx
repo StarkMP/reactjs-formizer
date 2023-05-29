@@ -16,7 +16,7 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
   custom,
   ...other
 }) => {
-  const { fields, updateValue, updateErrors, initialize, onFieldChange } =
+  const { fields, updateValue, initialize, onFieldChange } =
     useContext(FormContext);
 
   const rules: FieldRules = {
@@ -38,8 +38,6 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
         }
 
         onReset();
-        updateValue(name, value);
-        updateErrors(name, []);
       },
     });
   }, []);
@@ -50,7 +48,6 @@ const HiddenInput: React.FC<HiddenInputProps> = ({
 
       const errors = getValidationErrors(value, rules);
 
-      updateErrors(name, errors);
       onFieldChange(name, { value, errors });
     }
   }, [value]);

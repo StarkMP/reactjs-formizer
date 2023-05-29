@@ -14,7 +14,7 @@ const RadioInput: React.FC<RadioInputProps> = ({
   custom,
   ...other
 }) => {
-  const { fields, updateValue, updateErrors, initialize, onFieldChange } =
+  const { fields, updateValue, initialize, onFieldChange } =
     useContext(FormContext);
 
   const rules: FieldRules = {
@@ -42,7 +42,6 @@ const RadioInput: React.FC<RadioInputProps> = ({
 
       const errors = getValidationErrors(value, rules);
 
-      updateErrors(name, errors);
       onFieldChange(name, { value, errors });
     }
   };

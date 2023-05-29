@@ -12,8 +12,7 @@ const FileInput: React.FC<FileInputProps> = ({
   custom,
   ...other
 }) => {
-  const { updateValue, updateErrors, initialize, onFieldChange } =
-    useContext(FormContext);
+  const { updateValue, initialize, onFieldChange } = useContext(FormContext);
 
   const rules: FieldRules = {
     [FormValidationRules.Required]: required,
@@ -39,7 +38,6 @@ const FileInput: React.FC<FileInputProps> = ({
 
     const errors = getValidationErrors(filesList, rules);
 
-    updateErrors(name, errors);
     onFieldChange(name, { value: filesList, errors });
   };
 

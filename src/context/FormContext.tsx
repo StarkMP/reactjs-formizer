@@ -11,6 +11,7 @@ import {
   initialize as initializeAction,
   reset as resetAction,
   updateErrors as updateErrorsAction,
+  updateFieldErrors as updateFieldErrorsAction,
   updateValue as updateValueAction,
 } from '../reducers/fields';
 import {
@@ -25,7 +26,8 @@ import { formatFieldsData } from '../utils/format';
 
 export type FormContextProps = {
   updateValue: (name: string, value: FieldValue) => void;
-  updateErrors: (name: string, errors: FieldError[]) => void;
+  updateFieldErrors: (name: string) => void;
+  updateErrors: () => void;
   initialize: (name: string, params: FieldInitData) => void;
   onFieldChange: (
     name: string,
@@ -52,8 +54,12 @@ export const FormProvider: React.FC<{
     dispatch(updateValueAction(name, value));
   };
 
-  const updateErrors = (name: string, errorsArray: FieldError[]): void => {
-    dispatch(updateErrorsAction(name, errorsArray));
+  const updateFieldErrors = (name: string): void => {
+    dispatch(updateFieldErrorsAction(name));
+  };
+
+  const updateErrors = (): void => {
+    dispatch(updateErrorsAction());
   };
 
   const initialize = (name: string, params: FieldInitData): void => {
@@ -104,6 +110,7 @@ export const FormProvider: React.FC<{
     <FormContext.Provider
       value={{
         updateValue,
+        updateFieldErrors,
         updateErrors,
         initialize,
         onFieldChange,

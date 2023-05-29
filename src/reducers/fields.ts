@@ -1,10 +1,11 @@
-import { FieldError, FieldInitData, FieldValue, FormFields } from '../types';
+import { FieldInitData, FieldValue, FormFields } from '../types';
 import { getValidationErrors } from '../utils/validation';
 
 enum ActionTypes {
   UpdateValue = 0,
-  UpdateErrors,
+  UpdateFieldErrors,
   Initialize,
+  UpdateErrors,
   Reset,
 }
 
@@ -16,12 +17,9 @@ type UpdateValueAction = {
   };
 };
 
-type UpdateErrorsAction = {
-  type: ActionTypes.UpdateErrors;
-  payload: {
-    name: string;
-    errors: FieldError[];
-  };
+type UpdateFieldErrorsAction = {
+  type: ActionTypes.UpdateFieldErrors;
+  payload: string;
 };
 
 type InitializeAction = {
@@ -35,11 +33,16 @@ type ResetAction = {
   type: ActionTypes.Reset;
 };
 
+type UpdateErrorsAction = {
+  type: ActionTypes.UpdateErrors;
+};
+
 type Action =
   | UpdateValueAction
-  | UpdateErrorsAction
+  | UpdateFieldErrorsAction
   | InitializeAction
-  | ResetAction;
+  | ResetAction
+  | UpdateErrorsAction;
 
 export const updateValue = (
   name: string,
@@ -49,12 +52,9 @@ export const updateValue = (
   payload: { name, value },
 });
 
-export const updateErrors = (
-  name: string,
-  errors: FieldError[]
-): UpdateErrorsAction => ({
-  type: ActionTypes.UpdateErrors,
-  payload: { name, errors },
+export const updateFieldErrors = (name: string): UpdateFieldErrorsAction => ({
+  type: ActionTypes.UpdateFieldErrors,
+  payload: name,
 });
 
 export const initialize = (
@@ -63,6 +63,10 @@ export const initialize = (
 ): InitializeAction => ({
   type: ActionTypes.Initialize,
   payload: { type, defaultValue, errors, name, rules, onReset },
+});
+
+export const updateErrors = (): UpdateErrorsAction => ({
+  type: ActionTypes.UpdateErrors,
 });
 
 export const reset = (): ResetAction => ({
@@ -88,11 +92,30 @@ export const fieldsReducer = (
       };
     }
 
-    case ActionTypes.UpdateErrors: {
-      const { name, errors } = action.payload;
+    case ActionTypes.UpdateFieldErrors: {
+      const name = action.payload;
       const field = state[name] || {};
 
-      return { ...state, [name]: { ...field, errors } };
+      return {
+        ...state,
+        [name]: {
+          ...field,
+          errors: getValidationErrors(field.value, field.rules),
+        },
+      };
+    }
+
+    case ActionTypes.UpdateErrors: {
+      return Object.keys(state).reduce((memo: FormFields, current) => {
+        const field = state[current];
+
+        memo[current] = {
+          ...field,
+          errors: getValidationErrors(field.value, field.rules),
+        };
+
+        return memo;
+      }, {});
     }
 
     case ActionTypes.Reset: {

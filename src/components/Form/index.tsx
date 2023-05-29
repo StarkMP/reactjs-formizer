@@ -69,12 +69,12 @@ const FormComponent: React.FC<Omit<FormProps, 'onFieldsChange'>> = ({
         fields[name].rules
       );
 
-      updateErrors(name, errors[name]);
-
       if (errors[name].length > 0) {
         isValidationFailed = true;
       }
     });
+
+    updateErrors();
 
     if (isValidationFailed) {
       if (onValidationFailed) {

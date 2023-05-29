@@ -17,7 +17,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   custom,
   ...other
 }) => {
-  const { fields, updateValue, updateErrors, initialize, onFieldChange } =
+  const { fields, updateValue, initialize, onFieldChange } =
     useContext(FormContext);
 
   const fieldValue = fields[name]?.value;
@@ -46,7 +46,6 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 
     const errors = getValidationErrors(value, rules);
 
-    updateErrors(name, errors);
     onFieldChange(name, { value, errors });
   };
 

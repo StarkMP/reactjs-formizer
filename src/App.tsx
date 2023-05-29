@@ -221,7 +221,10 @@ export const RegistrationPage: React.FC = () => {
           </button>
           <button
             type='button'
-            onClick={(): void => setCount((prev) => prev - 1)}
+            onClick={(): void => {
+              setCount((prev) => prev - 1);
+              setValue('age', count - 1);
+            }}
           >
             -
           </button>
