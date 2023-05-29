@@ -16,7 +16,7 @@ const TextInput: React.FC<TextInputProps> = ({
   custom,
   ...other
 }) => {
-  const { fields, updateValue, initialize, onFieldChange } =
+  const { fields, updateValue, updateFieldErrors, initialize, onFieldChange } =
     useContext(FormContext);
 
   const fieldValue = fields[name]?.value;
@@ -51,13 +51,18 @@ const TextInput: React.FC<TextInputProps> = ({
     onFieldChange(name, { value, errors });
   };
 
+  const handleBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+    updateFieldErrors(name);
+  };
+
   return (
     <input
       {...other}
       type={type}
       name={name}
-      onChange={handleChange}
       value={(fieldValue !== undefined ? fieldValue : value) as string}
+      onChange={handleChange}
+      onBlur={handleBlur}
     />
   );
 };

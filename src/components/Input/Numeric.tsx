@@ -18,7 +18,7 @@ const NumericInput: React.FC<NumericInputProps> = ({
   custom,
   ...other
 }) => {
-  const { fields, updateValue, initialize, onFieldChange } =
+  const { fields, updateValue, updateFieldErrors, initialize, onFieldChange } =
     useContext(FormContext);
 
   const fieldValue = fields[name]?.value;
@@ -51,13 +51,18 @@ const NumericInput: React.FC<NumericInputProps> = ({
     onFieldChange(name, { value, errors });
   };
 
+  const handleBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+    updateFieldErrors(name);
+  };
+
   return (
     <input
       {...other}
       type={type}
       name={name}
-      onChange={handleChange}
       value={String(fieldValue !== undefined ? fieldValue : '')}
+      onChange={handleChange}
+      onBlur={handleBlur}
     />
   );
 };
