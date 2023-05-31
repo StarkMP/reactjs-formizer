@@ -65,6 +65,13 @@ export type FieldsChangeHandler = (data: FieldsData) => void;
 
 export type FieldResetHandler = () => void;
 
+export type UseFormizerParams = {
+  register: FormRegister;
+  getValue: (name: string) => FieldValue;
+  setValue: (name: string, value: FieldValue) => void;
+  getErrors: (name: string) => FieldError[];
+};
+
 export type TextInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'name' | 'value' | 'type'

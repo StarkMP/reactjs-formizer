@@ -1,13 +1,12 @@
 import { useRef, useState } from 'react';
 
-import { FieldError, FieldsData, FieldValue, FormRegister } from '../types';
-
-type UseFormizerParams = {
-  register: FormRegister;
-  getValue: (name: string) => FieldValue;
-  setValue: (name: string, value: FieldValue) => void;
-  getErrors: (name: string) => FieldError[];
-};
+import {
+  FieldError,
+  FieldsData,
+  FieldValue,
+  FormRegister,
+  UseFormizerParams,
+} from '../types';
 
 export const useFormizer = (): UseFormizerParams => {
   // hack for force render
