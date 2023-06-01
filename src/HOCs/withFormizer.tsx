@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { useFormizer } from '../hooks/useFormizer';
-import { UseFormizerParams } from '../types';
+import { FormValues, UseFormizerParams } from '../types';
 
-export const withFormizer = <T extends {}>(
-  WrappedComponent: React.ComponentType<T & UseFormizerParams>
-): React.FC<T & Partial<UseFormizerParams>> => {
+export const withFormizer = <A extends FormValues, T extends {}>(
+  WrappedComponent: React.ComponentType<T & UseFormizerParams<A>>
+): React.FC<T & Partial<UseFormizerParams<A>>> => {
   const ComponentWithFormizer: React.FC<T> = (props) => {
-    const formizerProps = useFormizer();
+    const formizerProps = useFormizer<A>();
 
     return <WrappedComponent {...props} {...formizerProps} />;
   };

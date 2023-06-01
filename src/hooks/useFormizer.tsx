@@ -5,10 +5,11 @@ import {
   FieldsData,
   FieldValue,
   FormRegister,
+  FormValues,
   UseFormizerParams,
 } from '../types';
 
-export const useFormizer = (): UseFormizerParams => {
+export const useFormizer = <A extends FormValues>(): UseFormizerParams<A> => {
   // hack for force render
   const [, setState] = useState(false);
 
@@ -23,11 +24,11 @@ export const useFormizer = (): UseFormizerParams => {
     setState((prev) => !prev);
   };
 
-  const getValue = (name: string): FieldValue => {
-    return fieldsRef.current.values[name];
+  const getValue = <T extends keyof A>(name: T & string): A[T] => {
+    return fieldsRef.current.values[name] as A[T];
   };
 
-  const setValue = (name: string, value: FieldValue): void => {
+  const setValue = <T extends keyof A>(name: T & string, value: A[T]): void => {
     if (!setValueRef.current) {
       return;
     }
@@ -35,7 +36,7 @@ export const useFormizer = (): UseFormizerParams => {
     setValueRef.current(name, value);
   };
 
-  const getErrors = (name: string): FieldError[] => {
+  const getErrors = <T extends keyof A>(name: T & string): FieldError[] => {
     return fieldsRef.current.errors[name];
   };
 

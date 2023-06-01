@@ -70,7 +70,23 @@ const getError = (name: string, fieldErrors: string[]): string | null => {
 export const RegistrationPage: React.FC = () => {
   const [count, setCount] = useState<number>(0);
 
-  const { register, getValue, getErrors, setValue } = useFormizer();
+  const { register, getValue, getErrors, setValue } = useFormizer<{
+    email: string;
+    password: string;
+    confirm: string;
+    age: number | null;
+    fav_language: string | null;
+    news: boolean;
+    privacy: boolean;
+    country: string;
+    phone: string;
+    linkedin: string;
+    birthday: string;
+    favorite_color: string;
+    some_range: number | null;
+    counter: number;
+    avatar: File[];
+  }>();
 
   const handleSubmit: SubmitHandler = ({ data }): void => {
     console.log('onSubmit', data);

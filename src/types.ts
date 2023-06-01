@@ -65,11 +65,11 @@ export type FieldsChangeHandler = (data: FieldsData) => void;
 
 export type FieldResetHandler = () => void;
 
-export type UseFormizerParams = {
+export type UseFormizerParams<A> = {
   register: FormRegister;
-  getValue: (name: string) => FieldValue;
-  setValue: (name: string, value: FieldValue) => void;
-  getErrors: (name: string) => FieldError[];
+  getValue: <T extends keyof A>(name: T & string) => A[T];
+  setValue: <T extends keyof A>(name: T & string, value: A[T]) => void;
+  getErrors: <T extends keyof A>(name: T & string) => FieldError[];
 };
 
 export type TextInputProps = Omit<
